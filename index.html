@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STARTECH MEDIA DOWNLOADER</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="stars-container"></div>
+    <div class="container">
+        <!-- Your existing navigation and content remains the same -->
+        <!-- ... all your existing HTML content ... -->
+
+        <!-- Improved Music Player Section -->
+        <div class="music-player">
+            <audio id="background-music" loop>
+                <source src="assets/background-music.mp3" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+            <button id="music-toggle" class="music-toggle">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+        </div>
+
+        <script src="script.js"></script>
+        <script src="theme.js"></script>
+        <script src="background.js"></script>
+        
+        <!-- Add this new script for music control -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const music = document.getElementById('background-music');
+                const musicToggle = document.getElementById('music-toggle');
+                let musicPlaying = false;
+                
+                // Function to handle first user interaction
+                function enableMusic() {
+                    // Try to play music (will only work after user interaction)
+                    const playPromise = music.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            musicPlaying = true;
+                            updateMusicIcon();
+                        })
+                        .catch(error => {
+                            console.log("Autoplay prevented:", error);
+                            musicToggle.style.display = 'block'; // Show button if autoplay fails
+                        });
+                    }
+                }
+                
+                // Update music icon based on state
+                function updateMusicIcon() {
+                    const icon = musicToggle.querySelector('i');
+                    if (musicPlaying) {
+                        icon.classList.remove('fa-volume-mute');
+                        icon.classList.add('fa-volume-up');
+                    } else {
+                        icon.classList.remove('fa-volume-up');
+                        icon.classList.add('fa-volume-mute');
+                    }
+                }
+                
+                // Toggle music play/pause
+                musicToggle.addEventListener('click', function() {
+                    if (musicPlaying) {
+                        music.pause();
+                    } else {
+                        music.play();
+                    }
+                    musicPlaying = !musicPlaying;
+                    updateMusicIcon();
+                });
+                
+                // Enable music on any user interaction with the page
+                document.body.addEventListener('click', function initMusic() {
+                    enableMusic();
+                    document.body.removeEventListener('click', initMusic);
+                }, { once: true });
+                
+                // Initially hide the toggle button (will show if autoplay fails)
+                musicToggle.style.display = 'none';
+            });
+        </script>
+    </div>
+</body>
+</html>
